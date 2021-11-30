@@ -22,27 +22,13 @@ foreach lib $libs {
     read_liberty $lib
 }
 
-foreach lef $tech_lefs {
-    puts $lef
-    if {[catch {read_lef $lef} errmsg]} {
-        puts stderr $errmsg
-        exit 1
-    }
-}
-
-foreach lef $cells_lefs {
-    puts $lef
-    if {[catch {read_lef $lef} errmsg]} {
-        puts stderr $errmsg
-        exit 1
-    }
-}
+exec python3 /openlane/scripts/mergeLef.py -i $tech_lefs $cells_lefs -o ./tmp/merged.lef
+read_lef ./tmp/merged.lef
 
 if {[catch {read_def -order_wires $def} errmsg]} {
     puts stderr $errmsg;
     exit 1;
 }
-exit
 
 read_sdc $sdc
 set_propagated_clock [all_clocks]
@@ -51,18 +37,18 @@ foreach via_rc $vias_rc {
     set layer_name [lindex $via_rc 0];
     set resistance [lindex $via_rc 1];
     set_layer_rc -via $layer_name -resistance $resistance;
-    };
+}
 
-    set_wire_rc -signal -layer $::env(WIRE_RC_LAYER)
-    set_wire_rc -clock -layer $::env(WIRE_RC_LAYER)
+set_wire_rc -signal -layer $::env(WIRE_RC_LAYER)
+set_wire_rc -clock -layer $::env(WIRE_RC_LAYER)
 
-    define_process_corner -ext_model_index 0 X;
-    extract_parasitics \
-        -ext_model_file $rcx_rule_file \
-        -corner_cnt $rcx_corner_count \
-        -max_res $rcx_max_res \
-        -coupling_threshold $rcx_coup_thres \
-        -cc_model $rcx_cc_model \
-        -context_depth $rcx_txt_depth
+define_process_corner -ext_model_index 0 X;
+extract_parasitics \
+    -ext_model_file $rcx_rule_file \
+    -corner_cnt $rcx_corner_count \
+    -max_res $rcx_max_res \
+    -coupling_threshold $rcx_coup_thres \
+    -cc_model $rcx_cc_model \
+    -context_depth $rcx_txt_depth
 
-    write_spef $spef_out_file
+write_spef $spef_out_file
