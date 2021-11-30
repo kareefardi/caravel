@@ -70,7 +70,7 @@ CARAVEL_ROOT ?= $(shell pwd)
 UPRJ_ROOT ?= $(shell pwd)
 
 # MANAGEMENT AREA ROOT
-MGMT_AREA_ROOT ?= $(shell pwd)/mgmt_core_wrapper 
+MGMT_AREA_ROOT ?= $(shell pwd)/mgmt_core_wrapper
 
 # Build tasks such as make ship, make generate_fill, make set_user_id, make final run in the foreground (1) or background (0)
 FOREGROUND ?= 1
@@ -104,7 +104,7 @@ __ship:
 	@echo "###############################################"
 	@echo "Generating Caravel GDS (sources are in the 'gds' directory)"
 	@sleep 1
-#### Runs from the CARAVEL_ROOT mag directory 
+#### Runs from the CARAVEL_ROOT mag directory
 	@echo "\
 		random seed `$(CARAVEL_ROOT)/scripts/set_user_id.py -report`; \
 		drc off; \
@@ -151,11 +151,11 @@ else
 	@echo "Make truck completed."  2>&1 | tee -a ./signoff/build/make_truck.out
 endif
 
-__truck: 
+__truck:
 	@echo "###############################################"
 	@echo "Generating Caravan GDS (sources are in the 'gds' directory)"
 	@sleep 1
-#### Runs from the CARAVEL_ROOT mag directory 
+#### Runs from the CARAVEL_ROOT mag directory
 	@echo "\
 		random seed `$(CARAVEL_ROOT)/scripts/set_user_id.py -report`; \
 		drc off; \
@@ -243,7 +243,7 @@ $(SPLIT_FILES_SOURCES): %: $$(sort $$(wildcard %.$(ARCHIVE_EXT).*.split))
 uncompress: $(SPLIT_FILES_SOURCES) $(ARCHIVE_SOURCES)
 	@echo "All files are uncompressed!"
 
-# Needed for targets that are run from UPRJ_ROOT for which caravel isn't submoduled. 
+# Needed for targets that are run from UPRJ_ROOT for which caravel isn't submoduled.
 .PHONY: uncompress-caravel
 uncompress-caravel:
 	cd $(CARAVEL_ROOT) && \
@@ -263,7 +263,7 @@ xor-wrapper: uncompress uncompress-caravel
 		user_project_wrapper user_project_wrapper.xor.xml
 	sh $(CARAVEL_ROOT)/utils/xor.sh \
 		$(CARAVEL_ROOT)/gds/user_project_wrapper_empty_erased.gds gds/user_project_wrapper_erased.gds \
-		user_project_wrapper gds/user_project_wrapper.xor.gds > signoff/user_project_wrapper_xor/xor.log 
+		user_project_wrapper gds/user_project_wrapper.xor.gds > signoff/user_project_wrapper_xor/xor.log
 	rm $(CARAVEL_ROOT)/gds/user_project_wrapper_empty_erased.gds gds/user_project_wrapper_erased.gds
 	mv gds/user_project_wrapper.xor.gds gds/user_project_wrapper.xor.xml signoff/user_project_wrapper_xor
 	python $(CARAVEL_ROOT)/utils/parse_klayout_xor_log.py \
@@ -279,9 +279,9 @@ xor-wrapper: uncompress uncompress-caravel
 # verify that the wrapper was respected
 xor-analog-wrapper: uncompress uncompress-caravel
 ### first erase the user's user_project_wrapper.gds
-	sh $(CARAVEL_ROOT)/utils/erase_box.sh gds/user_analog_project_wrapper.gds 0 0 2920 3520 -8 -8 
+	sh $(CARAVEL_ROOT)/utils/erase_box.sh gds/user_analog_project_wrapper.gds 0 0 2920 3520 -8 -8
 ### do the same for the empty wrapper
-	sh $(CARAVEL_ROOT)/utils/erase_box.sh $(CARAVEL_ROOT)/gds/user_analog_project_wrapper_empty.gds 0 0 2920 3520 -8 -8 
+	sh $(CARAVEL_ROOT)/utils/erase_box.sh $(CARAVEL_ROOT)/gds/user_analog_project_wrapper_empty.gds 0 0 2920 3520 -8 -8
 	mkdir -p signoff/user_analog_project_wrapper_xor
 ### XOR the two resulting layouts
 	sh $(CARAVEL_ROOT)/utils/xor.sh \
@@ -289,7 +289,7 @@ xor-analog-wrapper: uncompress uncompress-caravel
 		user_analog_project_wrapper user_analog_project_wrapper.xor.xml
 	sh $(CARAVEL_ROOT)/utils/xor.sh \
 		$(CARAVEL_ROOT)/gds/user_analog_project_wrapper_empty_erased.gds gds/user_analog_project_wrapper_erased.gds \
-		user_analog_project_wrapper gds/user_analog_project_wrapper.xor.gds > signoff/user_analog_project_wrapper_xor/xor.log 
+		user_analog_project_wrapper gds/user_analog_project_wrapper.xor.gds > signoff/user_analog_project_wrapper_xor/xor.log
 	rm $(CARAVEL_ROOT)/gds/user_analog_project_wrapper_empty_erased.gds gds/user_analog_project_wrapper_erased.gds
 	mv gds/user_analog_project_wrapper.xor.gds gds/user_analog_project_wrapper.xor.xml signoff/user_analog_project_wrapper_xor
 	python $(CARAVEL_ROOT)/utils/parse_klayout_xor_log.py \
@@ -460,7 +460,7 @@ $(MAG_BLOCKS): mag2gds-% : ./mag/%.mag uncompress
 	rm ./mag/mag2gds_$*.tcl
 	mv -f ./mag/$*.gds ./gds/
 
-# MAG2LEF 
+# MAG2LEF
 BLOCKS = $(shell cd openlane && find * -maxdepth 0 -type d)
 MAG_BLOCKS = $(foreach block, $(BLOCKS), mag2lef-$(block))
 $(MAG_BLOCKS): mag2lef-% : ./mag/%.mag uncompress
@@ -483,83 +483,22 @@ help:
 # RCX Extraction
 BLOCKS = $(shell cd openlane && find * -maxdepth 0 -type d)
 RCX_BLOCKS = $(foreach block, $(BLOCKS), rcx-$(block))
-OPENLANE_IMAGE_NAME=efabless/openlane:2021.11.23_01.42.34
-$(RCX_BLOCKS): rcx-% : ./def/%.def 
-	echo "Running RC Extraction on $*"
-	mkdir -p ./def/tmp 
-	# merge techlef and standard cell lef files
-	python3 $(OPENLANE_ROOT)/scripts/mergeLef.py -i $(PDK_ROOT)/sky130A/libs.ref/$(STD_CELL_LIBRARY)/techlef/$(STD_CELL_LIBRARY).tlef $(PDK_ROOT)/sky130A/libs.ref/$(STD_CELL_LIBRARY)/lef/*.lef -o ./def/tmp/merged.lef
-	echo "\
-		read_liberty $(PDK_ROOT)/sky130A/libs.ref/$(STD_CELL_LIBRARY)/lib/$(STD_CELL_LIBRARY)__tt_025C_1v80.lib;\
-		read_liberty $(PDK_ROOT)/sky130A/libs.ref/$(SPECIAL_VOLTAGE_LIBRARY)/lib/$(SPECIAL_VOLTAGE_LIBRARY)__tt_025C_3v30.lib;\
-		set std_cell_lef ./def/tmp/merged.lef;\
-		set mgmt_area_lef $(MGMT_AREA_ROOT)/lef/mgmt_core_wrapper.lef;\
-		if {[catch {read_lef \$$std_cell_lef} errmsg]} {\
-    			puts stderr \$$errmsg;\
-    			exit 1;\
-		};\
-		foreach lef_file [glob ./lef/*.lef] {\
-			if {[catch {read_lef \$$lef_file} errmsg]} {\
-    			puts stderr \$$errmsg;\
-    			exit 1;\
-			}\
-		};\
-		if {[catch {read_lef \$$mgmt_area_lef} errmsg]} {\
-    			puts stderr \$$errmsg;\
-    			exit 1;\
-		};\
-		if {[catch {read_def -order_wires ./def/$*.def} errmsg]} {\
-			puts stderr \$$errmsg;\
-			exit 1;\
-		};\
-		read_sdc ./spef/$*.sdc;\
-		set_propagated_clock [all_clocks];\
-		set rc_values \"mcon 9.249146E-3,via 4.5E-3,via2 3.368786E-3,via3 0.376635E-3,via4 0.00580E-3\";\
-		set vias_rc [split \$$rc_values ","];\
-    	foreach via_rc \$$vias_rc {\
-        		set layer_name [lindex \$$via_rc 0];\
-        		set resistance [lindex \$$via_rc 1];\
-       			set_layer_rc -via \$$layer_name -resistance \$$resistance;\
-    	};\
-		set_wire_rc -signal -layer met2;\
-		set_wire_rc -clock -layer met5;\
-		define_process_corner -ext_model_index 0 X;\
-		extract_parasitics -ext_model_file ${PDK_ROOT}/sky130A/libs.tech/openlane/rcx_rules.info -corner_cnt 1 -max_res 50 -coupling_threshold 0.1 -cc_model 10 -context_depth 5;\
-		write_spef ./spef/$*.spef" > ./def/tmp/rcx_$*.tcl
-## Generate Spef file
-	docker run -it -v $(OPENLANE_ROOT):/openLANE_flow -v $(PDK_ROOT):$(PDK_ROOT) -v $(PWD):/caravel -v $(MGMT_AREA_ROOT):$(MGMT_AREA_ROOT) -e PDK_ROOT=$(PDK_ROOT) -u $(shell id -u $(USER)):$(shell id -g $(USER)) $(OPENLANE_IMAGE_NAME) \
-	sh -c " cd /caravel; openroad -exit ./def/tmp/rcx_$*.tcl |& tee ./def/tmp/rcx_$*.log" 
-## Run OpenSTA
-	echo "\
-		set std_cell_lef ./def/tmp/merged.lef;\
-		set mgmt_area_lef $(MGMT_AREA_ROOT)/lef/mgmt_core_wrapper.lef;\
-		if {[catch {read_lef \$$std_cell_lef} errmsg]} {\
-    			puts stderr \$$errmsg;\
-    			exit 1;\
-		};\
-		foreach lef_file [glob ./lef/*.lef] {\
-			if {[catch {read_lef \$$lef_file} errmsg]} {\
-    			puts stderr \$$errmsg;\
-    			exit 1;\
-			}\
-		};\
-		if {[catch {read_lef \$$mgmt_area_lef} errmsg]} {\
-			puts stderr \$$errmsg;\
-			exit 1;\
-		};\
-		set_cmd_units -time ns -capacitance pF -current mA -voltage V -resistance kOhm -distance um;\
-		read_liberty $(PDK_ROOT)/sky130A/libs.ref/$(STD_CELL_LIBRARY)/lib/$(STD_CELL_LIBRARY)__tt_025C_1v80.lib;\
-		read_def ./def/$*.def;\
-		read_spef ./spef/$*.spef;\
-		read_sdc -echo ./spef/$*.sdc;\
-		write_sdf ./sdf/$*.sdf;\
-		report_checks -fields {capacitance slew input_pins nets fanout} -path_delay min_max -group_count 1000;\
-		report_check_types -max_slew -max_capacitance -max_fanout -violators;\
-		report_checks -to [all_outputs] -group_count 1000;\
-		report_checks -to [all_outputs] -unconstrained -group_count 1000;\
-		" > ./def/tmp/or_sta_$*.tcl 
-	docker run -it -v $(OPENLANE_ROOT):/openLANE_flow -v $(PDK_ROOT):$(PDK_ROOT) -v $(PWD):/caravel -v $(MGMT_AREA_ROOT):$(MGMT_AREA_ROOT) -e PDK_ROOT=$(PDK_ROOT) -u $(shell id -u $(USER)):$(shell id -g $(USER)) $(OPENLANE_IMAGE_NAME) \
-	sh -c "cd /caravel; openroad -exit ./def/tmp/or_sta_$*.tcl |& tee ./def/tmp/or_sta_$*.log" 
+OPENLANE_IMAGE_NAME=efabless/openlane:donn
+$(RCX_BLOCKS): rcx-% : ./def/%.def
+	# Running RC Extraction on $*
+	@mkdir -p ./logs/rcx
+	@docker run -it \
+		-v $(OPENLANE_ROOT):/openLANE_flow \
+		-v $(PDK_ROOT):$(PDK_ROOT) \
+		-v $(PWD):/caravel \
+		-v $(MGMT_AREA_ROOT):$(MGMT_AREA_ROOT) \
+		-e PDK_ROOT=$(PDK_ROOT) \
+		-e BLOCK=$* \
+		-e STD_CELL_LIBRARY=$(STD_CELL_LIBRARY) \
+		-e SPECIAL_VOLTAGE_LIBRARY=$(SPECIAL_VOLTAGE_LIBRARY) \
+		-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
+		$(OPENLANE_IMAGE_NAME) \
+		sh -c " cd /caravel; openroad -exit ./scripts/openroad_rcx.tcl |& tee ./logs/rcx/openroad_rcx_$*.log"
 
 ###########################################################################
 .PHONY: generate_fill
@@ -609,7 +548,7 @@ else
 	@echo "Set user ID completed." 2>&1 | tee -a ./signoff/build/set_user_id.out
 endif
 
-__set_user_id: 
+__set_user_id:
 	mkdir -p ./signoff/build
 	# Update info.yaml
 	# sed -r "s/^(\s*project_id\s*:\s*).*/\1${USER_ID}/" -i info.yaml
@@ -762,8 +701,8 @@ master_manifest:
 	find mag/*.mag -type f  -exec shasum {} \; >> master_manifest && \
 	find maglef/*.mag -type f -exec shasum {} \; >> master_manifest && \
 	find spi/lvs/*.spice -type f -exec shasum {} \; >> master_manifest && \
-	find gds/*.gds -type f -exec shasum {} \; >> master_manifest 
-	
+	find gds/*.gds -type f -exec shasum {} \; >> master_manifest
+
 check-env:
 ifndef PDK_ROOT
 	$(error PDK_ROOT is undefined, please export it before running make)
@@ -772,7 +711,7 @@ endif
 check-uid:
 ifndef USER_ID
 	$(error USER_ID is undefined, please export it before running make set_user_id)
-else 
+else
 	@echo USER_ID is set to $(USER_ID)
 endif
 
