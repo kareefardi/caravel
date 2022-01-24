@@ -16,7 +16,7 @@
 package require openlane
 set script_dir [file dirname [file normalize [info script]]]
 
-prep -design $script_dir -tag user_project_wrapper -overwrite
+prep -design $script_dir -overwrite
 set save_path $script_dir/../..
 
 verilog_elaborate
@@ -39,10 +39,9 @@ run_magic
 
 run_magic_drc
 
-save_views       -lef_path $::env(magic_result_file_tag).lef \
+save_views       -lef_path $::env(finishing_results)/$::env(DESIGN_NAME).lef \
                  -def_path $::env(CURRENT_DEF) \
-                 -gds_path $::env(magic_result_file_tag).gds \
-                 -mag_path $::env(magic_result_file_tag).mag \
-                 -spice_path $::env(magic_result_file_tag).spice \
-                 -save_path $save_path \
-                 -tag $::env(RUN_TAG)
+                 -gds_path $::env(finishing_results)/$::env(DESIGN_NAME).gds \
+                 -mag_path $::env(finishing_results)/$::env(DESIGN_NAME).mag \
+                 -spice_path $::env(finishing_results)/$::env(DESIGN_NAME).spice \
+                 -save_path $save_path 

@@ -29,21 +29,21 @@ set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 
 ## Floorplan
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 100 7"
+set ::env(DIE_AREA) "0 0 100 14"
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
-set ::env(BOTTOM_MARGIN_MULT) 0
-set ::env(TOP_MARGIN_MULT) 0
-set ::env(LEFT_MARGIN_MULT) 0
-set ::env(RIGHT_MARGIN_MULT) 0
+set ::env(BOTTOM_MARGIN_MULT) 1
+set ::env(TOP_MARGIN_MULT) 1
+set ::env(LEFT_MARGIN_MULT) 1
+set ::env(RIGHT_MARGIN_MULT) 1
 
 ## PDN
 set ::env(FP_PDN_AUTO_ADJUST) 0
 set ::env(FP_PDN_LOWER_LAYER) met2
 set ::env(FP_PDN_UPPER_LAYER) met3
 set ::env(FP_PDN_VOFFSET) 1
-set ::env(FP_PDN_HOFFSET) 2
+set ::env(FP_PDN_HOFFSET) 3
 set ::env(FP_PDN_VWIDTH) 0.3
 set ::env(FP_PDN_HWIDTH) 0.5
 set ::env(FP_PDN_VPITCH) 40

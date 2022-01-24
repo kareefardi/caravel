@@ -17,7 +17,6 @@
 set script_dir [file dirname [file normalize [info script]]]
 
 set ::env(DESIGN_NAME) "housekeeping"
-set ::env(ROUTING_CORES) 6 
 set ::env(RUN_KLAYOUT) 0
 
 set ::env(VERILOG_FILES) "\
@@ -38,7 +37,7 @@ set ::env(SYNTH_MAX_FANOUT) 20
 
 ## Floorplan
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 300.230 550.950"
+set ::env(DIE_AREA) "0 0 316 570"
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
@@ -47,24 +46,31 @@ set ::env(FP_IO_MIN_DISTANCE) 2
 set ::env(CELL_PAD) 0
 
 ## Routing 
-set ::env(GLB_RT_ADJUSTMENT) 0.06 
+# set ::env(GLB_RT_ADJUSTMENT) 1.06 
 set ::env(GLB_RT_OVERFLOW_ITERS) 100
 
 set ::env(GLB_RESIZER_HOLD_SLACK_MARGIN) 0.17
 
 # prevent signal routing on li1 
-set ::env(GLB_RT_OBS) "\
-    li1 0 0 5.94500 550.950,\
-    li1 0 0 300.23000 10.97000,\
-    li1 294.23500 0 300.22000 550.95000,\
-    li1 0 538.84500 300.2300 550.95000"
+# set ::env(GLB_RT_OBS) "\
+#     li1 0 0 5.94500 550.950,\
+#     li1 0 0 300.23000 10.97000,\
+#     li1 294.23500 0 300.22000 550.95000,\
+#     li1 0 538.84500 300.2300 550.95000"
 
 ## Placement
-set ::env(PL_TARGET_DENSITY) 0.378
+set ::env(PL_TARGET_DENSITY) 0.4
 
 set ::env(PL_RESIZER_HOLD_SLACK_MARGIN) .17
 set ::env(PL_RESIZER_MAX_SLEW_MARGIN) "30"
 
 ## Diode Insertion
-set ::env(DIODE_INSERTION_STRATEGY) "3"
+set ::env(DIODE_INSERTION_STRATEGY) "4"
 set ::env(GLB_RT_ANT_ITERS) "7"
+
+set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 0
+set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
+set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
+
+
+#set ::env(ROUTING_CORES) 24

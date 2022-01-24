@@ -22,6 +22,7 @@ set ::env(USE_GPIO_ROUTING_LEF) 0
 prep -design $script_dir -tag chip_io_lvs -overwrite
 
 set ::env(SYNTH_DEFINES) ""
+set ::env(CURRENT_SDC) $::env(BASE_SDC_FILE)
 verilog_elaborate
 #init_floorplan
 #file copy -force $::env(CURRENT_DEF) $::env(TMP_DIR)/lvs.def
@@ -41,13 +42,13 @@ verilog_elaborate
 init_floorplan
 
 puts_info "Generating pad frame"
-exec python3 $::env(SCRIPTS_DIR)/padringer.py\
-	--def-netlist $::env(CURRENT_DEF)\
-	--design $::env(DESIGN_NAME)\
-	--lefs $::env(TECH_LEF) {*}$::env(GPIO_PADS_LEF)\
-	-cfg $script_dir/padframe.cfg\
-	--working-dir $::env(TMP_DIR)\
-	-o $::env(RESULTS_DIR)/floorplan/padframe.def |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/padringer.log
+exec openroad -python $::env(SCRIPTS_DIR)/padringer.py\
+    --def-netlist $::env(CURRENT_DEF)\
+    --design $::env(DESIGN_NAME)\
+    --lefs $::env(TECH_LEF) {*}$::env(GPIO_PADS_LEF) {*}$::env(EXTRA_LEFS)\
+    -cfg $script_dir/padframe.cfg\
+    --working-dir $::env(TMP_DIR)\
+    -o $::env(RESULTS_DIR)/floorplan/padframe.def |& tee $::env(TERMINAL_OUTPUT) $::env(LOGS_DIR)/padringer.log
 
 puts_info "Generated pad frame"
 
@@ -58,11 +59,11 @@ remove_pins -input $::env(CURRENT_DEF)
 remove_empty_nets -input $::env(CURRENT_DEF)
 
 set core_obs "
-	met1 225 235 3365 4950, \
-	met2 225 235 3365 4950, \
-	met3 225 235 3365 4950, \
-	met4 225 235 3365 4955, \ 
-	met5 225 235 3365 4955
+    met1 225 235 3365 4950, \
+    met2 225 235 3365 4950, \
+    met3 225 235 3365 4950, \
+    met4 225 235 3365 4955, \ 
+    met5 225 235 3365 4955
 "
 set gpio_m3_pins_north "met3 469.965 4972.585 3200.4450 4988.785"
 
@@ -81,31 +82,31 @@ set gpio_m3_pins_east "met3 3370.840 600.050 3387.01 4731.99"
 set ::env(GLB_RT_OBS) "$core_obs"
 
 set ::env(GLB_RT_OBS) "\
-	$core_obs, \ 
-	$gpio_m3_pins_north, \
-	$gpio_m3_pins_west_0, \
-	$gpio_m3_pins_west_1, \
-	$gpio_m3_pins_west_2, \
-	$gpio_m3_pins_east
+    $core_obs, \ 
+    $gpio_m3_pins_north, \
+    $gpio_m3_pins_west_0, \
+    $gpio_m3_pins_west_1, \
+    $gpio_m3_pins_west_2, \
+    $gpio_m3_pins_east
 "
 
-try_catch python3 $::env(SCRIPTS_DIR)/add_def_obstructions.py \
-	--input-def $::env(CURRENT_DEF) \
-	--lef $::env(MERGED_LEF) \
-	--obstructions $::env(GLB_RT_OBS) \
-	--output [file rootname $::env(CURRENT_DEF)].obs.def |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/obs.log
+try_catch openroad -python $::env(SCRIPTS_DIR)/add_def_obstructions.py \
+    --input-def $::env(CURRENT_DEF) \
+    --lef $::env(MERGED_LEF) \
+    --obstructions $::env(GLB_RT_OBS) \
+    --output [file rootname $::env(CURRENT_DEF)].obs.def |& tee $::env(TERMINAL_OUTPUT) $::env(LOGS_DIR)/obs.log
 
 set_def [file rootname $::env(CURRENT_DEF)].obs.def
 
-li1_hack_start
+# li1_hack_start
 global_routing
 detailed_routing
-li1_hack_end
+# li1_hack_end
 
 label_macro_pins\
-	-lef $::env(TMP_DIR)/lvs.lef\
-	-netlist_def $::env(TMP_DIR)/lvs.def\
-	-pad_pin_name "PAD"
+    -lef $::env(TMP_DIR)/lvs.lef\
+    -netlist_def $::env(TMP_DIR)/lvs.def\
+    -pad_pin_name "PAD"
 
 run_magic
 
@@ -118,8 +119,8 @@ save_views       -lef_path $::env(magic_result_file_tag).lef \
                  -gds_path $::env(magic_result_file_tag).gds \
                  -mag_path $::env(magic_result_file_tag).mag \
                  -maglef_path $::env(magic_result_file_tag).lef.mag \
-				 -verilog_path $::env(TMP_DIR)/lvs.v \
-				 -spice_path $::env(magic_result_file_tag).spice \
+                 -verilog_path $::env(TMP_DIR)/lvs.v \
+                 -spice_path $::env(magic_result_file_tag).spice \
                  -save_path $save_path \
                  -tag $::env(RUN_TAG)
 

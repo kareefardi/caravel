@@ -17,7 +17,7 @@ package require openlane
 set script_dir [file dirname [file normalize [info script]]]
 set save_path $script_dir/../..
 
-prep -design $script_dir -tag gpio_control_block -overwrite
+prep -design $script_dir
 
 run_synthesis
 

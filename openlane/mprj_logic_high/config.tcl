@@ -31,9 +31,9 @@ set ::env(DIE_AREA) "0 0 350 22"
 
 # Do an initial run with the custom pin order configuration, then run the mgmt_protect block. 
 # After that, you can enable the context IO placement 
-set ::env(FP_CONTEXT_DEF) $script_dir/../mgmt_protect/runs/mgmt_protect/tmp/floorplan/5-ioPlacer.macro_placement.def
-set ::env(FP_CONTEXT_LEF) $script_dir/../mgmt_protect/runs/mgmt_protect/tmp/merged_unpadded.lef
-#set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
+#set ::env(FP_CONTEXT_DEF) $script_dir/../mgmt_protect/runs/mgmt_protect/tmp/floorplan/4-io.macro_placement.def
+#set ::env(FP_CONTEXT_LEF) $script_dir/../mgmt_protect/runs/mgmt_protect/tmp/merged_unpadded.lef
+set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
 set ::env(BOTTOM_MARGIN_MULT) 2
 set ::env(TOP_MARGIN_MULT) 2
@@ -75,4 +75,6 @@ set ::env(GLB_RT_OVERFLOW_ITERS) 200
 
 set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 0
 
-set ::env(GLB_RT_OBS) "li1 $::env(DIE_AREA), met2 0 0 277 1.5"
+# set ::env(GLB_RT_OBS) "li1 $::env(DIE_AREA), met2 0 0 277 1.5"
+
+# set ::env(DIODE_INSERTION_STRATEGY) 4

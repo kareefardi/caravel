@@ -22,6 +22,7 @@ set ::env(VERILOG_FILES) $script_dir/../../verilog/rtl/user_id_programming.v
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 
 # Fill this
+set ::env(CLOCK_PORT) ""
 set ::env(CLOCK_TREE_SYNTH) 0
 
 set ::env(CELL_PAD) 0

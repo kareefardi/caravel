@@ -72,7 +72,7 @@ set ::env(FP_PDN_VSPACING) 3.4
 set ::env(FP_PDN_HSPACING) 3.4
 
 ## Placement 
-set ::env(PL_TARGET_DENSITY) 0.91
+set ::env(PL_TARGET_DENSITY) 0.95
 # for some reason resizer is leaving a floating net after running repair_tie_fanout command
 set ::env(PL_RESIZER_REPAIR_TIE_FANOUT) 0
 
@@ -97,7 +97,7 @@ set ::env(GLB_RT_OBS) "\
 	met1 120 0 170 65"
 
 ## Diode Insertion
-set ::env(DIODE_INSERTION_STRATEGY) "3"
+set ::env(DIODE_INSERTION_STRATEGY) 4
 
 ## Internal macros
 set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro_placement.cfg
@@ -110,3 +110,14 @@ set ::env(EXTRA_LEFS) "\
 
 set ::env(EXTRA_GDS_FILES) "\
 	$script_dir/../../gds/gpio_logic_high.gds"
+
+set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 0
+
+set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
+
+set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 1
+set ::env(PL_RESIZER_HOLD_SLACK_MARGIN) 0.04
+set ::env(PL_RESIZER_ALLOW_SETUP_VIOS) 1
+#set ::env(PL_RESIZER_HOLD_MAX_BUFFER_PERCENT) 2
+
+set ::env(QUIT_ON_MAGIC_DRC) 0

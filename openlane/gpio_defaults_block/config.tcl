@@ -31,7 +31,20 @@ set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
 
 ## Floorplan
-set ::env(DIE_AREA) "0 0 30 11"
+set site_wdith 0.46
+set site_height 2.72
+set met1_width 0.48
+set nwell_extra 0.19
+set core_x [expr $site_wdith * 65.0]
+set core_y [expr $site_height * 3.0]
+
+set die_x [expr $core_x + [expr $nwell_extra * 2.0]]
+set die_y [expr $core_y + $met1_width]
+
+# set ::env(CORE_AREA) "$nwell_extra [expr $met1_width / 2.0] [expr $nwell_extra + $core_x] [expr $core_y + [expr $met1_width / 2.0]]"
+# set ::env(CORE_AREA) "0.19 0.24 30.28 8.4"
+set ::env(CORE_AREA) "1 0 2.66 2.72"
+set ::env(DIE_AREA) "0 0 $die_x $die_y"
 set ::env(FP_SIZING) absolute
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
@@ -41,10 +54,10 @@ set ::env(FP_IO_HLENGTH) "2"
 set ::env(FP_HORIZONTAL_HALO) 0
 set ::env(FP_VERTICAL_HALO) 0
 
-set ::env(TOP_MARGIN_MULT) 0
-set ::env(BOTTOM_MARGIN_MULT) 1
-set ::env(LEFT_MARGIN_MULT) 0
-set ::env(RIGHT_MARGIN_MULT) 0
+#set ::env(TOP_MARGIN_MULT) 1
+#set ::env(BOTTOM_MARGIN_MULT) 1
+#set ::env(LEFT_MARGIN_MULT) 1
+#set ::env(RIGHT_MARGIN_MULT) 1
 
 set ::env(CELL_PAD) 0
 
@@ -52,7 +65,7 @@ set ::env(CELL_PAD) 0
 set ::env(FP_PDN_AUTO_ADJUST) 0
 set ::env(FP_PDN_VWIDTH) 1.4
 set ::env(FP_PDN_VOFFSET) 1
-set ::env(FP_PDN_HOFFSET) 2
+set ::env(FP_PDN_HOFFSET) 1
 set ::env(FP_PDN_VPITCH) 7
 set ::env(FP_PDN_HPITCH) 7
 

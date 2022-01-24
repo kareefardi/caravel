@@ -30,7 +30,7 @@ set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
 
 ## Floorplan
-set ::env(DIE_AREA) "0 0 7 16"
+set ::env(DIE_AREA) "0 0 7 20"
 set ::env(FP_SIZING) absolute
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
@@ -40,10 +40,10 @@ set ::env(FP_VERTICAL_HALO) 0
 
 set ::env(FP_TAPCELL_DIST) 4
 
-set ::env(TOP_MARGIN_MULT) 0
-set ::env(BOTTOM_MARGIN_MULT) 0
-set ::env(LEFT_MARGIN_MULT) 0
-set ::env(RIGHT_MARGIN_MULT) 0
+set ::env(TOP_MARGIN_MULT) 1
+set ::env(BOTTOM_MARGIN_MULT) 1
+set ::env(LEFT_MARGIN_MULT) 1
+set ::env(RIGHT_MARGIN_MULT) 1
 
 set ::env(CELL_PAD) 0
 
@@ -55,7 +55,7 @@ set ::env(GND_NETS) "vssd1"
 set ::env(FP_PDN_AUTO_ADJUST) 0
 set ::env(FP_PDN_VWIDTH) 1.4
 set ::env(FP_PDN_VOFFSET) 1
-set ::env(FP_PDN_VPITCH) 7.4
+set ::env(FP_PDN_VPITCH) 4.7
 
 ## Placement
 set ::env(PL_TARGET_DENSITY) 0.8
@@ -65,3 +65,4 @@ set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
 set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 0
 
+set ::env(DIODE_INSERTION_STRATEGY) 4

@@ -9,16 +9,17 @@ create_clock [get_ports {"mgmt_gpio_in[4]"} ] -name "mgmt_gpio_in"  -period $::e
 
 ## GENERATED CLOCKS
 # NOTE: change the clock pins whenever the synthesis receipe changes 
-create_generated_clock -name "wbbd_sck" -source [get_ports {"wb_clk_i"} ] -divide_by 1 [get_pins {"_9640_/Q"} ] 
-create_generated_clock -name "csclk_fast" -source [get_pins {"_9640_/Q"}]  -divide_by 1 [get_pins {"_8847_/X"} ] 
-create_generated_clock -name "csclk_slow" -source [get_ports {"mgmt_gpio_in[4]"} ] -divide_by 1 [get_pins {"_8847_/X"} ] 
+create_generated_clock -name "wbbd_sck" -source [get_ports {"wb_clk_i"} ] -divide_by 1 [get_pins {"_9716_/Q"} ] 
+create_generated_clock -name "csclk_fast" -source [get_pins {"_9716_/Q"}]  -divide_by 1 [get_pins {"_8923_/X"} ] 
+create_generated_clock -name "csclk_slow" -source [get_ports {"mgmt_gpio_in[4]"} ] -divide_by 1 [get_pins {"_8923_/X"} ] 
+
+create_generated_clock -name "serial_bb_clock" -source [get_pins {"_8923_/X"} ] -multiply_by 2 [get_pins {"_9848_/Q"} ] 
 
 # serial_clock (twice the wb_clk_i frequency)
-create_generated_clock -name "serial_clock_pre" -source [get_ports {"wb_clk_i"} ] -multiply_by 2 [get_pins {"_9239_/Q"} ] 
-create_generated_clock -name "serial_bb_clock" -source [get_pins {"_8847_/X"} ] -multiply_by 2 [get_pins {"_9772_/Q"} ] 
+create_generated_clock -name "serial_clock_pre" -source [get_ports {"wb_clk_i"} ] -multiply_by 2 [get_pins {"_9315_/Q"} ] 
 
-create_generated_clock -name "serial_clock_wb" -source [get_pins {"_9239_/Q"} ] -multiply_by 2 [get_pins {"_8819_/X"} ] 
-create_generated_clock -name "serial_clock_bb" -source [get_pins {"_9772_/Q"} ] -multiply_by 2 [get_pins {"_8819_/X"} ] 
+create_generated_clock -name "serial_clock_wb" -source [get_pins {"_9315_/Q"} ] -multiply_by 1 [get_pins {"_8895_/X"} ] 
+create_generated_clock -name "serial_clock_bb" -source [get_pins {"_9848_/Q"} ] -multiply_by 1 [get_pins {"_8895_/X"} ] 
 
 # paths between wb_clk_i and mgmt_gpio_in shouldn't be timed
 set_clock_groups -logically_exclusive -group wb_clk_i -group mgmt_gpio_in 

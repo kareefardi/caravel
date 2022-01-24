@@ -30,10 +30,13 @@ set ::env(USE_GPIO_PADS) 1
 
 # The removal of this line is pending the IO verilog files being parsable by yosys...
 set ::env(VERILOG_FILES_BLACKBOX) "\
-    $script_dir/../../verilog/stubs/sky130_fd_io__top_xres4v2.v\
-    $script_dir/../../verilog/stubs/sky130_fd_io__top_ground_lvc_wpad.v\
-    $script_dir/../../verilog/stubs/sky130_fd_io__top_power_lvc_wpad.v"
+    $script_dir/../../verilog/stubs/sky130_fd_io__top_xres4v2.blackbox.v"
+#    $script_dir/../../verilog/stubs/sky130_fd_io__top_ground_lvc_wpad.blackbox.v\
+#    $script_dir/../../verilog/stubs/sky130_fd_io__top_power_lvc_wpad.blackbox.v"
 
+# where is the lef for sky130_ef_io__vccd_lvc_clamped3_pad.lef
+
+set ::env(EXTRA_LEFS) "$script_dir/../../lef/sky130_ef_io__vccd_lvc_clamped3_pad.lef $script_dir/../../lef/sky130_ef_io__vssd_lvc_clamped3_pad.lef"
 set ::env(GPIO_PADS_VERILOG) "\
 	$::env(PDK_ROOT)/$::env(PDK)/libs.ref/sky130_fd_io/verilog/sky130_ef_io.v"
 
