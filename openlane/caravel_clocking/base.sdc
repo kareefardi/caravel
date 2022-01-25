@@ -5,20 +5,36 @@ create_clock [get_ports {"pll_clk90"} ] -name "pll_clk90"  -period 6.66666666666
 
 ## GENERATED CLOCKS
 # divided PLL clocks
-create_generated_clock -name pll_clk_divided -source [get_ports pll_clk] -divide_by 2 [get_pins _355_/Y] 
-create_generated_clock -name pll_clk90_divided -source [get_ports pll_clk90] -divide_by 2 [get_pins _357_/Y] 
-
+# sky130_fd_sc_hd__o22ai_2 _248_ (
+#    .Y(\divider.out )
+#  );
+# sky130_fd_sc_hd__o22ai_2 _257_ (
+#   .Y(\divider2.out )
+# );
+create_generated_clock -name pll_clk_divided -source [get_ports pll_clk] -divide_by 2 [get_pins _248_/Y] 
+create_generated_clock -name pll_clk90_divided -source [get_ports pll_clk90] -divide_by 2 [get_pins _257_/Y] 
+#  sky130_fd_sc_hd__mux2_2 _322_ (
+#    .A0(ext_clk_syncd_pre),
+#    .A1(ext_clk),
+#    .S(resetb),
+#    .X(_146_)
+#  );
+#  sky130_fd_sc_hd__dfxtp_2 _410_ (
+#    .CLK(pll_clk),
+#    .D(_025_),
+#    .Q(ext_clk_syncd_pre)
+#  );
 #  assign core_ext_clk = (use_pll_first) ? ext_clk_syncd : ext_clk;
-create_generated_clock -name core_ext_clk -source [get_ports ext_clk] -divide_by 1 [get_pins _347_/X] 
-create_generated_clock -name core_ext_clk_syncd -source [get_pins _444_/Q] -divide_by 1 [get_pins _347_/X] 
+create_generated_clock -name core_ext_clk -source [get_ports ext_clk] -divide_by 1 [get_pins _322_/X] 
+create_generated_clock -name core_ext_clk_syncd -source [get_pins _410_/Q] -divide_by 1 [get_pins _322_/X] 
 
 # assign core_clk = (use_pll_second) ? pll_clk_divided : core_ext_clk;
-create_generated_clock -name core_clk -source [get_pins _347_/X]  -divide_by 1 [get_ports core_clk] 
-create_generated_clock -name core_clk_pll -source [get_pins _355_/Y]   -divide_by 1 [get_ports core_clk] 
+create_generated_clock -name core_clk -source [get_pins _322_/X]  -divide_by 1 [get_ports core_clk] 
+create_generated_clock -name core_clk_pll -source [get_pins _248_/Y]   -divide_by 1 [get_ports core_clk] 
 
 # assign user_clk = (use_pll_second) ? pll_clk90_divided : core_ext_clk;
-create_generated_clock -name user_clk -source [get_pins _347_/X]  -divide_by 1 [get_ports user_clk] 
-create_generated_clock -name user_clk_pll -source [get_pins _357_/Y]   -divide_by 1 [get_ports user_clk]  
+create_generated_clock -name user_clk -source [get_pins _322_/X]  -divide_by 1 [get_ports user_clk] 
+create_generated_clock -name user_clk_pll -source [get_pins _257_/Y]   -divide_by 1 [get_ports user_clk]  
 
 # logically exclusive clocks, the generated pll clocks and the ext core clk
 set_clock_groups -logically_exclusive -group core_ext_clk -group core_ext_clk_syncd
