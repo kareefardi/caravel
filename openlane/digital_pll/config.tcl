@@ -28,6 +28,7 @@ set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 set ::env(SYNTH_MAX_FANOUT) 6
 set ::env(SYNTH_BUFFERING) 0
 set ::env(SYNTH_SIZING) 0
+set ::env(SYNTH_STRATEGY) "AREA 1"
 
 set ::env(BASE_SDC_FILE) $script_dir/base.sdc 
 
@@ -49,7 +50,7 @@ set ::env(FP_PDN_HPITCH) 40
 ## Placement
 set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
-set ::env(PL_TARGET_DENSITY) 0.82
+set ::env(PL_TARGET_DENSITY) 0.89
 
 ## Routing 
 set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 0
