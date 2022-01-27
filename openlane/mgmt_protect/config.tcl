@@ -77,7 +77,7 @@ set ::env(VDD_NETS) "vccd vccd1 vccd2 vdda1 vdda2"
 set ::env(GND_NETS) "vssd vssd1 vssd2 vssa1 vssa2"
 
 ## Placement 
-set ::env(PL_TARGET_DENSITY) 0.14
+set ::env(PL_TARGET_DENSITY) 0.11
 set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
 
@@ -86,7 +86,7 @@ set ::env(PL_RESIZER_MAX_SLEW_MARGIN) 25
 ## Routing 
 #set ::env(GLB_RT_MINLAYER) 2
 #set ::env(GLB_RT_MAXLAYER) 5
-#set ::env(GLB_RT_ADJUSTMENT) 0.3
+set ::env(GLB_RT_ADJUSTMENT) 0.1
 set ::env(GLB_RT_OVERFLOW_ITERS) 100
 set ::env(GLB_RT_ALLOW_CONGESTION) 0
 
