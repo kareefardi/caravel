@@ -9,17 +9,30 @@ create_clock [get_ports {"mgmt_gpio_in[4]"} ] -name "mgmt_gpio_in"  -period $::e
 
 ## GENERATED CLOCKS
 # NOTE: change the clock pins whenever the synthesis receipe changes 
-create_generated_clock -name "wbbd_sck" -source [get_ports {"wb_clk_i"} ] -divide_by 1 [get_pins {"_9716_/Q"} ] 
-create_generated_clock -name "csclk_fast" -source [get_pins {"_9716_/Q"}]  -divide_by 1 [get_pins {"_8923_/X"} ] 
-create_generated_clock -name "csclk_slow" -source [get_ports {"mgmt_gpio_in[4]"} ] -divide_by 1 [get_pins {"_8923_/X"} ] 
+set wbbd_sck_pin [get_pins -of_objects wbbd_sck -filter lib_pin_name==Q]
+set csclk_pin [get_pins -of_objects csclk -filter lib_pin_name==X]
+set serial_clock_pre_pin [get_pins -of_objects serial_clock_pre -filter lib_pin_name==Q]
+set serial_bb_clock_pin [get_pins -of_object serial_bb_clock -filter lib_pin_name==Q]
+create_generated_clock -name "wbbd_sck" -source [get_ports {"wb_clk_i"} ] -divide_by 1 $wbbd_sck_pin
+create_generated_clock -name "csclk_fast" -source $wbbd_sck_pin  -divide_by 1 $csclk_pin 
+create_generated_clock -name "csclk_slow" -source [get_ports {"mgmt_gpio_in[4]"} ] -divide_by 1 $csclk_pin 
 
-create_generated_clock -name "serial_bb_clock" -source [get_pins {"_8923_/X"} ] -multiply_by 2 [get_pins {"_9848_/Q"} ] 
+create_generated_clock -name "serial_bb_clock" -source $csclk_pin -multiply_by 2 $serial_bb_clock_pin 
 
 # serial_clock (twice the wb_clk_i frequency)
-create_generated_clock -name "serial_clock_pre" -source [get_ports {"wb_clk_i"} ] -multiply_by 2 [get_pins {"_9315_/Q"} ] 
+create_generated_clock -name "serial_clock_pre" -source [get_ports {"wb_clk_i"} ] -multiply_by 2 $serial_clock_pre_pin 
 
-create_generated_clock -name "serial_clock_wb" -source [get_pins {"_9315_/Q"} ] -multiply_by 1 [get_pins {"_8895_/X"} ] 
-create_generated_clock -name "serial_clock_bb" -source [get_pins {"_9848_/Q"} ] -multiply_by 1 [get_pins {"_8895_/X"} ] 
+set muxes_2 [list $::env(STD_CELL_LIBRARY)__mux2_1 $::env(STD_CELL_LIBRARY)__mux2_2 $::env(STD_CELL_LIBRARY)__mux2_4 $::env(STD_CELL_LIBRARY)__mux2_8]
+foreach mux_2 $muxes_2 {
+    set mux2_instance [get_cells -of_objects serial_clock_pre -filter ref_name==$mux_2]
+    if { $mux2_instance ne "" } {
+        puts "\[caravel_clocking_sdc\] found mux2: $mux2_instance"
+        break
+    }
+}
+set serial_clock_mux_pin [get_pins -of_objects $mux2_instance -filter lib_pin_name==X]
+create_generated_clock -name "serial_clock_wb" -source $serial_clock_pre_pin -multiply_by 1 $serial_clock_mux_pin
+create_generated_clock -name "serial_clock_bb" -source $serial_bb_clock_pin -multiply_by 1 $serial_clock_mux_pin
 
 # paths between wb_clk_i and mgmt_gpio_in shouldn't be timed
 set_clock_groups -logically_exclusive -group wb_clk_i -group mgmt_gpio_in 

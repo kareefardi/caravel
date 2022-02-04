@@ -5,36 +5,48 @@ create_clock [get_ports {"pll_clk90"} ] -name "pll_clk90"  -period 6.66666666666
 
 ## GENERATED CLOCKS
 # divided PLL clocks
-# sky130_fd_sc_hd__o22ai_2 _248_ (
+# $::env(STD_CELL_LIBRARY)__o22ai_2 _248_ (
 #    .Y(\divider.out )
 #  );
-# sky130_fd_sc_hd__o22ai_2 _257_ (
+# $::env(STD_CELL_LIBRARY)__o22ai_2 _257_ (
 #   .Y(\divider2.out )
 # );
-create_generated_clock -name pll_clk_divided -source [get_ports pll_clk] -divide_by 2 [get_pins _248_/Y] 
-create_generated_clock -name pll_clk90_divided -source [get_ports pll_clk90] -divide_by 2 [get_pins _257_/Y] 
-#  sky130_fd_sc_hd__mux2_2 _322_ (
+set divider1_out_pin [get_pins -of_objects divider.out -filter lib_pin_name==Y]
+set divider2_out_pin [get_pins -of_objects divider2.out -filter lib_pin_name==Y]
+create_generated_clock -name pll_clk_divided -source [get_ports pll_clk] -divide_by 2 $divider1_out_pin
+create_generated_clock -name pll_clk90_divided -source [get_ports pll_clk90] -divide_by 2 $divider2_out_pin
+#  $::env(STD_CELL_LIBRARY)__mux2_2 _322_ (
 #    .A0(ext_clk_syncd_pre),
 #    .A1(ext_clk),
 #    .S(resetb),
 #    .X(_146_)
 #  );
-#  sky130_fd_sc_hd__dfxtp_2 _410_ (
+#  $::env(STD_CELL_LIBRARY)__dfxtp_2 _410_ (
 #    .CLK(pll_clk),
 #    .D(_025_),
 #    .Q(ext_clk_syncd_pre)
 #  );
 #  assign core_ext_clk = (use_pll_first) ? ext_clk_syncd : ext_clk;
-create_generated_clock -name core_ext_clk -source [get_ports ext_clk] -divide_by 1 [get_pins _322_/X] 
-create_generated_clock -name core_ext_clk_syncd -source [get_pins _410_/Q] -divide_by 1 [get_pins _322_/X] 
+set muxes_2 [list $::env(STD_CELL_LIBRARY)__mux2_1 $::env(STD_CELL_LIBRARY)__mux2_2 $::env(STD_CELL_LIBRARY)__mux2_4 $::env(STD_CELL_LIBRARY)__mux2_8]
+foreach mux_2 $muxes_2 {
+    set mux2_instance [get_cells -of_objects ext_clk_syncd_pre -filter ref_name==$mux_2]
+    if { $mux2_instance ne "" } {
+        puts "\[caravel_clocking_sdc\] found mux2: $mux2_instance"
+        break
+    }
+}
+set core_ext_clk_pre_pin [get_pins -filter lib_pin_name==X -of_objects $mux2_instance]
+set core_ext_clk_synced_source [get_pins -of_objects ext_clk_syncd_pre -filter lib_pin_name==Q]
+create_generated_clock -name core_ext_clk -source [get_ports ext_clk] -divide_by 1 $core_ext_clk_pre_pin
+create_generated_clock -name core_ext_clk_syncd -source $core_ext_clk_synced_source -divide_by 1 $core_ext_clk_pre_pin
 
 # assign core_clk = (use_pll_second) ? pll_clk_divided : core_ext_clk;
-create_generated_clock -name core_clk -source [get_pins _322_/X]  -divide_by 1 [get_ports core_clk] 
-create_generated_clock -name core_clk_pll -source [get_pins _248_/Y]   -divide_by 1 [get_ports core_clk] 
+create_generated_clock -name core_clk -source $core_ext_clk_pre_pin  -divide_by 1 [get_ports core_clk] 
+create_generated_clock -name core_clk_pll -source $divider1_out_pin   -divide_by 1 [get_ports core_clk] 
 
 # assign user_clk = (use_pll_second) ? pll_clk90_divided : core_ext_clk;
-create_generated_clock -name user_clk -source [get_pins _322_/X]  -divide_by 1 [get_ports user_clk] 
-create_generated_clock -name user_clk_pll -source [get_pins _257_/Y]   -divide_by 1 [get_ports user_clk]  
+create_generated_clock -name user_clk -source $core_ext_clk_pre_pin  -divide_by 1 [get_ports user_clk] 
+create_generated_clock -name user_clk_pll -source $divider2_out_pin  -divide_by 1 [get_ports user_clk]  
 
 # logically exclusive clocks, the generated pll clocks and the ext core clk
 set_clock_groups -logically_exclusive -group core_ext_clk -group core_ext_clk_syncd
