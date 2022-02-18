@@ -30,14 +30,14 @@ set ::env(CLOCK_NET) "$::env(CLOCK_PORT) csclk mgmt_gpio_in\[4\]"
 set ::env(BASE_SDC_FILE) $script_dir/base.sdc
 
 ## Synthesis 
-set ::env(NO_SYNTH_CELL_LIST) $script_dir/no_synth.list 
-set ::env(SYNTH_STRATEGY) "AREA 0"
+# set ::env(NO_SYNTH_CELL_LIST) $script_dir/no_synth.list 
+set ::env(SYNTH_STRATEGY) "AREA 2"
 
 set ::env(SYNTH_MAX_FANOUT) 20
 
 ## Floorplan
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 316 570"
+set ::env(DIE_AREA) "0 0 300.230 550.950"
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
@@ -46,7 +46,7 @@ set ::env(FP_IO_MIN_DISTANCE) 2
 set ::env(CELL_PAD) 0
 
 ## Routing 
-# set ::env(GLB_RT_ADJUSTMENT) 1.06 
+set ::env(GLB_RT_ADJUSTMENT) 0
 set ::env(GLB_RT_OVERFLOW_ITERS) 100
 
 set ::env(GLB_RESIZER_HOLD_SLACK_MARGIN) 0.17
@@ -59,7 +59,7 @@ set ::env(GLB_RESIZER_HOLD_SLACK_MARGIN) 0.17
 #     li1 0 538.84500 300.2300 550.95000"
 
 ## Placement
-set ::env(PL_TARGET_DENSITY) 0.4
+set ::env(PL_TARGET_DENSITY) 0.39
 
 set ::env(PL_RESIZER_HOLD_SLACK_MARGIN) .17
 set ::env(PL_RESIZER_MAX_SLEW_MARGIN) "30"
