@@ -14,78 +14,97 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-BLOCKS = $(shell find * -maxdepth 0 -type d)
-CONFIG = $(foreach block,$(BLOCKS), ./$(block)/config.tcl)
-CLEAN = $(foreach block,$(BLOCKS), clean-$(block))
+MAKEFLAGS=--warn-undefined-variables
 
+# Env variables
 OPENLANE_TAG ?= 2021.11.23_01.42.34
 OPENLANE_IMAGE_NAME ?= efabless/openlane:$(OPENLANE_TAG)
-OPENLANE_BASIC_COMMAND = "cd $(PWD)/../openlane && flow.tcl -design ./$* -save_path .. -save -overwrite"
-OPENLANE_INTERACTIVE_COMMAND = "cd $(PWD)/../openlane && flow.tcl -it -file ./$*/interactive.tcl"
 
-all: $(BLOCKS)
+# configuration varaibles
+threads = 16
 
-$(CONFIG) :
-	@echo "Missing $@. Please create a configuration for that design"
-	@exit 1
+# target variables for easier interfaces
+blocks = $(shell find * -maxdepth 0 -type d)
+regression-target = $(blocks:%=%-regression)
+clean-target = $(blocks:%=clean-%)
 
-$(BLOCKS) : % : ./%/config.tcl FORCE
+# aliases to avoid code duplication
+openlane_basic_command = "cd $$(realpath $(PWD)/../openlane) && flow.tcl -design ./$* -save_path $$(realpath ..) -save -overwrite"
+openlane_interactive_command = "cd $$(realpath $(PWD)/../openlane) && flow.tcl -it -file $$(realpath./$*/interactive.tcl)"
+openlane_regression_command = "python3 run_designs.py --regression $(PWD)/$*/regression.config --threads $(threads) $(PWD)/$*"
+define docker_run
+		docker run -it -v $(OPENLANE_ROOT):/openlane \
+		-v $(PDK_ROOT):$(PDK_ROOT) \
+		-v $(PWD)/..:$(PWD)/.. \
+		-v $(CARAVEL_ROOT):$(CARAVEL_ROOT) \
+		-v $(MGMT_AREA_ROOT):$(MGMT_AREA_ROOT) \
+		-e PDK_ROOT=$(PDK_ROOT) \
+		-e CARAVEL_ROOT=$(CARAVEL_ROOT) \
+		-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
+		$(OPENLANE_IMAGE_NAME)
+endef
+define print_exports
+	@echo "pdk root: $(PDK_ROOT)"
+	@echo "openlane image: $(OPENLANE_IMAGE_NAME)"
+	@echo "openlane root: $(OPENLANE_ROOT)"
+endef
+
+all: $(blocks)
+
+./%/regression.config:
+	$(error file $@ not found. please provide one)
+
+./%/config.tcl:
+	$(error file $@ not found. please provide one)
+
+.PHONY: $(regression-target)
+$(regression-target):  %-regression : ./%/regression.config
 ifeq ($(OPENLANE_ROOT),)
 	@echo "Please export OPENLANE_ROOT"
 	@exit 1
 endif
+		$(call docker_run) sh -c $(openlane_regression_command)
+
+.PHONY: $(blocks)
+$(blocks) : % : ./%/config.tcl
 ifeq ($(PDK_ROOT),)
-	@echo "Please export PDK_ROOT"
-	@exit 1
+	$(error Please export PDK_ROOT)
 endif
+	$(call print_exports)
+	@sleep 5
 	@echo "###############################################"
-	@sleep 1
 
 	@if [ -f ./$*/interactive.tcl ]; then\
-		docker run -it -v $(OPENLANE_ROOT):/openlane \
-		-v $(PDK_ROOT):$(PDK_ROOT) \
-		-v $(PWD)/..:$(PWD)/.. \
-		-v $(CARAVEL_ROOT):$(CARAVEL_ROOT) \
-		-v $(MGMT_AREA_ROOT):$(MGMT_AREA_ROOT) \
-		-e PDK_ROOT=$(PDK_ROOT) \
-		-e CARAVEL_ROOT=$(CARAVEL_ROOT) \
-		-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
-		$(OPENLANE_IMAGE_NAME) sh -c $(OPENLANE_INTERACTIVE_COMMAND);\
+		$(call docker_run) sh -c $(openlane_interactive_command);\
 	else\
-		docker run -it -v $(OPENLANE_ROOT):/openlane \
-		-v $(PDK_ROOT):$(PDK_ROOT) \
-		-v $(PWD)/..:$(PWD)/.. \
-		-v $(CARAVEL_ROOT):$(CARAVEL_ROOT) \
-		-v $(MGMT_AREA_ROOT):$(MGMT_AREA_ROOT) \
-		-e PDK_ROOT=$(PDK_ROOT) \
-		-e CARAVEL_ROOT=$(CARAVEL_ROOT) \
-		-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
-		$(OPENLANE_IMAGE_NAME) sh -c $(OPENLANE_BASIC_COMMAND);\
+		$(call docker_run) sh -c $(openlane_basic_command);\
 	fi
 	mkdir -p ../signoff/$*/
-	cp $*/runs/$*/OPENLANE_VERSION ../signoff/$*/
-	cp $*/runs/$*/PDK_SOURCES ../signoff/$*/
-	cp $*/runs/$*/reports/final_summary_report.csv ../signoff/$*/
+	# ignoring signoff directory for now
+	# the bellow commands aren't executing
+	# cp $*/runs/$*/OPENLANE_VERSION ../signoff/$*/
+	# cp $*/runs/$*/PDK_SOURCES ../signoff/$*/
+	# cp $*/runs/$*/reports/final_summary_report.csv ../signoff/$*/
+	$(call print_exports)
 
 .PHONY: openlane
-openlane:
+openlane: $(OPENLANE_ROOT)
 ifeq ($(OPENLANE_ROOT),)
-	@echo "Please export OPENLANE_ROOT"
-	@exit 1
+	$(error Please export OPENLANE_ROOT)
 endif
+
+$(OPENLANE_ROOT):
 	git clone https://github.com/The-OpenROAD-Project/OpenLane --branch=$(OPENLANE_TAG) --depth=1 $(OPENLANE_ROOT) && \
 		cd $(OPENLANE_ROOT) && \
 		export IMAGE_NAME=efabless/openlane:$(OPENLANE_TAG) && \
 		make openlane
 
-FORCE:
-
 clean:
-	@echo "Use clean_all to clean everything :)"
+	@echo "Use clean-all to clean everything :)"
 
-clean_all: $(CLEAN)
+clean-all: $(clean-target)
 
-$(CLEAN): clean-% :
+$(clean-target): clean-% :
 	rm -rf runs/$*
 	rm -rf ../gds/$**
 	rm -rf ../mag/$**
