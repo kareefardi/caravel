@@ -56,7 +56,7 @@ close $fd
 set ::env(DIODE_INSERTION_STRATEGY) 0
 
 ## Routing
-set ::env(GLB_RT_MAXLAYER) 4
+#set ::env(GLB_RT_MAXLAYER) 4
 set ::env(GLB_RT_UNIDIRECTIONAL) 0
 set ::env(GLB_RT_ALLOW_CONGESTION) 1
 set ::env(GLB_RT_OVERFLOW_ITERS) 150

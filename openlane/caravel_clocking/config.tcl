@@ -47,7 +47,7 @@ set ::env(FP_TAPCELL_DIST) 6
 
 set ::env(LEFT_MARGIN_MULT) 1
 set ::env(BOTTOM_MARGIN_MULT) 1
-set ::env(TOP_MARGIN_MULT) "2"
+set ::env(TOP_MARGIN_MULT) 2
 
 set ::env(CELL_PAD) 0
 

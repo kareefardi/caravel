@@ -35,8 +35,8 @@ set ::env(FP_SIZING) absolute
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
-set ::env(FP_HORIZONTAL_HALO) 0
-set ::env(FP_VERTICAL_HALO) 0
+set ::env(FP_PDN_HORIZONTAL_HALO) 0
+set ::env(FP_PDN_VERTICAL_HALO) 0
 
 set ::env(FP_TAPCELL_DIST) 4
 

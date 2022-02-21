@@ -35,6 +35,7 @@ set ::env(BASE_SDC_FILE) $script_dir/base.sdc
 ## Synthesis
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
+set ::env(SYNTH_STRATEGY) "DELAY 0"
 
 ## Floorplan
 set ::env(FP_SIZING) absolute
@@ -59,8 +60,8 @@ set ::env(FP_PDN_AUTO_ADJUST) 0
 set ::env(FP_PDN_VWIDTH) 1.6
 set ::env(FP_PDN_HWIDTH) 1.6
 
-set ::env(FP_HORIZONTAL_HALO) 2
-set ::env(FP_VERTICAL_HALO) 2
+set ::env(FP_PDN_HORIZONTAL_HALO) 2
+set ::env(FP_PDN_VERTICAL_HALO) 2
 
 set ::env(FP_PDN_HOFFSET) 1.5
 set ::env(FP_PDN_VOFFSET) 9.0

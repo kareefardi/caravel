@@ -86,7 +86,7 @@ set ::env(PL_RESIZER_MAX_SLEW_MARGIN) 25
 ## Routing 
 #set ::env(GLB_RT_MINLAYER) 2
 #set ::env(GLB_RT_MAXLAYER) 5
-set ::env(GLB_RT_ADJUSTMENT) 0.1
+set ::env(GLB_RT_ADJUSTMENT) 0
 set ::env(GLB_RT_OVERFLOW_ITERS) 100
 set ::env(GLB_RT_ALLOW_CONGESTION) 0
 
