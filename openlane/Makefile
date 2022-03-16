@@ -30,12 +30,11 @@ clean-target = $(blocks:%=clean-%)
 
 # aliases to avoid code duplication
 openlane_basic_command = "cd $$(realpath $(PWD)/../openlane) && flow.tcl -design ./$* -save_path $$(realpath ..) -save -overwrite"
-openlane_interactive_command = "cd $$(realpath $(PWD)/../openlane) && flow.tcl -it -file $$(realpath./$*/interactive.tcl)"
+openlane_interactive_command = "cd $$(realpath $(PWD)/../openlane) && flow.tcl -it -file $$(realpath ./$*/interactive.tcl)"
 openlane_regression_command = "python3 run_designs.py --regression $(PWD)/$*/regression.config --threads $(threads) $(PWD)/$*"
 define docker_run
 		docker run -it -v $(OPENLANE_ROOT):/openlane \
 		-v $(PDK_ROOT):$(PDK_ROOT) \
-		-v $(PWD)/..:$(PWD)/.. \
 		-v $(CARAVEL_ROOT):$(CARAVEL_ROOT) \
 		-v $(MGMT_AREA_ROOT):$(MGMT_AREA_ROOT) \
 		-e PDK_ROOT=$(PDK_ROOT) \
