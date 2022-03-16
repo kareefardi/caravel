@@ -65,7 +65,7 @@ if { $::env(VDD_NET) == "vccd1" } {
 		}
 		connect {{$::env(FP_PDN_LOWER_LAYER)_PIN_ver $::env(FP_PDN_UPPER_LAYER)}}
 	}
-	set ::halo [list $::env(FP_HORIZONTAL_HALO) $::env(FP_VERTICAL_HALO)]
+	set ::halo [list $::env(FP_PDN_HORIZONTAL_HALO) $::env(FP_PDN_VERTICAL_HALO)]
     pdngen::specify_grid macro [subst $macro]
 } else {
 	set macro {
@@ -76,7 +76,7 @@ if { $::env(VDD_NET) == "vccd1" } {
 		straps {
 		}
 	}
-	set ::halo [list $::env(FP_HORIZONTAL_HALO) $::env(FP_VERTICAL_HALO)]
+	set ::halo [list $::env(FP_PDN_HORIZONTAL_HALO) $::env(FP_PDN_VERTICAL_HALO)]
     pdngen::specify_grid macro [subst $macro]
 }
 
