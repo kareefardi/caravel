@@ -73,7 +73,7 @@ set ::env(FP_PDN_VSPACING) 3.4
 set ::env(FP_PDN_HSPACING) 3.4
 
 ## Placement 
-set ::env(PL_TARGET_DENSITY) 0.95
+set ::env(PL_TARGET_DENSITY) 0.7
 # for some reason resizer is leaving a floating net after running repair_tie_fanout command
 set ::env(PL_RESIZER_REPAIR_TIE_FANOUT) 0
 
@@ -100,6 +100,9 @@ set ::env(GLB_RT_OBS) "\
 ## Diode Insertion
 set ::env(DIODE_INSERTION_STRATEGY) 4
 
+set ::env(FP_TAP_HORIZONTAL_HALO) {2}                                                                                                                                                                  
+set ::env(FP_TAP_VERTICAL_HALO) {2}
+
 ## Internal macros
 set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro_placement.cfg
 
@@ -116,11 +119,13 @@ set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 0
 
 set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
 
-set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
-set ::env(PL_RESIZER_HOLD_SLACK_MARGIN) 0.04
+set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 1
+# 0.07 ns 70 ps
+set ::env(PL_RESIZER_HOLD_SLACK_MARGIN) 0.08
 set ::env(PL_RESIZER_ALLOW_SETUP_VIOS) 1
 #set ::env(PL_RESIZER_HOLD_MAX_BUFFER_PERCENT) 2
 
 set ::env(QUIT_ON_MAGIC_DRC) 0
+set ::env(QUIT_ON_LVS_ERROR) 0
 
 set ::env(YOSYS_EXTRA_MAPPING) $script_dir/yosys_mapping.v
