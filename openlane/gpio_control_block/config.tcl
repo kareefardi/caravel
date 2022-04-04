@@ -121,11 +121,11 @@ set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
 
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 1
 # 0.07 ns 70 ps
-set ::env(PL_RESIZER_HOLD_SLACK_MARGIN) 0.08
+set ::env(PL_RESIZER_HOLD_SLACK_MARGIN) 0.05
 set ::env(PL_RESIZER_ALLOW_SETUP_VIOS) 1
 #set ::env(PL_RESIZER_HOLD_MAX_BUFFER_PERCENT) 2
 
 set ::env(QUIT_ON_MAGIC_DRC) 0
 set ::env(QUIT_ON_LVS_ERROR) 0
 
-set ::env(YOSYS_EXTRA_MAPPING) $script_dir/yosys_mapping.v
+set ::env(SYNTH_EXTRA_MAPPING_FILE) $script_dir/yosys_mapping.v
